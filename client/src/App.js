@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import PageNotFound from "./components/PageNotFound";
+import Password from "./components/Password";
+import Profile from "./components/Profile";
+import Recovery from "./components/Recovery";
+import Register from "./components/Register";
+import Reset from "./components/Reset";
+import Username from "./components/Username";
+
+export default function App() {
+    return (
+        <BrowserRouter>
+            <div>
+                <Routes>
+                    <Route exact path="/" element={<Username />}></Route>
+                    <Route path="/register" element={<Register />}></Route>
+                    <Route path="/password" element={<Password />}></Route>
+                    <Route path="/profile" element={<Profile />}></Route>
+                    <Route path="/recovery" element={<Recovery />}></Route>
+                    <Route path="/reset" element={<Reset />}></Route>
+                    <Route path="*" element={<PageNotFound />}></Route>
+                </Routes>
+            </div>
+        </BrowserRouter>
+    )
 }
-
-export default App;
