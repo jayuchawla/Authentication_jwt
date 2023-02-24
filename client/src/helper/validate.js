@@ -60,3 +60,9 @@ export async function registerPageValidation(values) {
     emailValidate(errors, values);
     return errors;
 }
+
+/* profile page validation */
+export async function profilePageValidation(values) {
+    const errors = emailValidate({}, values);
+    return errors;
+}
