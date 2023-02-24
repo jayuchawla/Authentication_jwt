@@ -25,8 +25,6 @@ export async function loginPasswordValidate(values) {
 function passwordValidate(errors = {}, values) {
     if (!values.password) {
         errors.password = toast.error('Password Required...!')
-    } else if (values.password.includes(" ")) {
-        errors.password = toast.error('Invalid Password...!')
     } else if(values.password.length < 4) {
         errors.password = toast.error('Length of password must be greater than 4...!')
     }
