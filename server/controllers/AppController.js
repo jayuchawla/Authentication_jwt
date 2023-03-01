@@ -133,6 +133,24 @@ export async function loginController(req, res) {
 
 /** GET: http://localhost:8080/api/user/example123 */
 export async function getUserController(req, res) {
+    const { username } = req.params;
+    try {
+        if (!username) {
+            res.status(501).send({ error: "Invalid username...!" })
+        }
+        UserModel.findOne({ username }, (err, user) => {
+            if (err) {
+                res.status(500).send({ error: err })
+            }
+            if (!user) {
+                res.status(501).send({ error: "User does not exists...!" })
+            }
+            const { password, ...otherAtts } = Object.assign({}, user.toJSON())
+            res.status(201).send({ user: otherAtts });
+        })
+    } catch (error) {
+        res.status(404).send({ error: "User not found...!" })
+    }
 
 }
 
