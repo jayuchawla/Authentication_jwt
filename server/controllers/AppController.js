@@ -1,6 +1,23 @@
 import bcrypt from "bcrypt";
+import Jwt from "jsonwebtoken";
+import ENV from '../config.js';
 
 import UserModel from "../model/User.model.js";
+
+/** Middleware for verifying user */
+export async function verifyUser(req, res, next) {
+    try {
+        const { username } = req.method == "GET" ? req.query : req.body;
+        // check user existence
+        let exist = await UserModel.findOne({ username });
+        if (!exist) {
+            res.status(404).send({ error: "Cannot find user...!" })
+        }
+        next(req, res);
+    } catch (error) {
+        res.status(404).send({ error: "Authentication error" })
+    }
+}
 
 /** POST: http://localhost:8080/api/register 
  * @param : {
@@ -50,7 +67,7 @@ export async function registerController(req, res) {
                             // return and save result
                             user.save()
                                 .then((result) => {
-                                    res.status(201).send({msg: "User registered success."})
+                                    res.status(201).send({ msg: "User registered success." })
                                 })
                                 .catch((error) => {
                                     res.status(500).send({ error })
@@ -78,7 +95,40 @@ export async function registerController(req, res) {
 }
 */
 export async function loginController(req, res) {
+    const { username, password } = req.body;
+    try {
+        const validLogin = new Promise((resolve, reject) => {
+            UserModel.findOne({ username }, (err, user) => {
+                if (err) return res.status(500).send(new Error(err))
+                if (user) {
+                    bcrypt.compare(password, user.password, function (err, result) {
+                        if (err) {
+                            // handle error
+                            res.status(500).send(new Error(err))
+                        }
+                        if (result) {
+                            // Create and Send JWT
+                            console.log(result);
+                            const token = Jwt.sign({
+                                userId: user._id,
+                                username: user.username
+                            }, ENV.JWT_SECRET, { expiresIn: "24h" });
+                            res.status(200).send({
+                                msg: "Login Success...",
+                                username: user.username,
+                                token: token
+                            });
+                        } else {
+                            res.status(400).send({ error: "Invalid login credentials...!" });
+                        }
+                    });
+                }
+            })
+        })
 
+    } catch (error) {
+        return res.status(500).send({ error })
+    }
 }
 
 /** GET: http://localhost:8080/api/user/example123 */

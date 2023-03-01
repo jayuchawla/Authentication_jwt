@@ -22,7 +22,7 @@ router.route('/authenticate').post((req, res) => {
 
 // login in app
 router.route('/login').post((req, res) => {
-    controller.loginController(req, res);
+    controller.verifyUser(req, res, controller.loginController);
 })
 
 /****** GET ******/
