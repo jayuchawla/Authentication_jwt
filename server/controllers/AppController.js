@@ -156,7 +156,7 @@ export async function getUserController(req, res) {
 
 /** PUT: http://localhost:8080/api/updateuser 
  * @param: {
-  "header" : "<token>"
+  "id" : "<user-id>"
 }
 body: {
     firstName: '',
@@ -165,7 +165,20 @@ body: {
 }
 */
 export async function updateUserController(req, res) {
-
+    try {
+        const { id } = req.query;
+        if (id) {
+            const body = req.body;
+            UserModel.updateOne({ _id: id }, body, (err, data) => {
+                if (err) throw err;
+                res.status(201).send({ msg: "User data updated...!" })
+            })
+        } else {
+            res.status(401).send({ error: "User not found...!" })
+        }
+    } catch (error) {
+        res.status(401).send({ error: error })
+    }
 }
 
 /** GET: http://localhost:8080/api/generateOTP */
