@@ -4,6 +4,9 @@ const router = Router();
 /* import controllers */
 import * as controller from '../controllers/AppController.js';
 
+/* import authorization middleware */
+import * as authMiddleware from '../middleware/auth.js';
+
 /******* POST *******/
 // register user
 router.route('/register').post((req, res) => {
@@ -49,7 +52,7 @@ router.route('/createResetSession').get((req, res) => {
 /****** PUT ******/
 // update user profile
 router.route('/updateUser').put((req, res) => {
-    controller.updateUserController(req, res);
+    authMiddleware.auth(req, res, controller.updateUserController);
 })
 
 // reset password

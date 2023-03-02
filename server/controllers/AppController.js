@@ -140,23 +140,24 @@ export async function getUserController(req, res) {
         }
         UserModel.findOne({ username }, (err, user) => {
             if (err) {
-                res.status(500).send({ error: err })
+                return res.status(500).send({ error: err })
             }
             if (!user) {
-                res.status(501).send({ error: "User does not exists...!" })
+                return res.status(501).send({ error: "User does not exists...!" })
             }
             const { password, ...otherAtts } = Object.assign({}, user.toJSON())
-            res.status(201).send({ user: otherAtts });
+            return res.status(201).send({ user: otherAtts });
         })
     } catch (error) {
-        res.status(404).send({ error: "User not found...!" })
+        return res.status(404).send({ error: "User not found...!" })
     }
 
 }
 
 /** PUT: http://localhost:8080/api/updateuser 
  * @param: {
-  "id" : "<user-id>"
+  "id" : "<user-id>" ❌❌
+  // user id param no more required ---> GIVEN A VALID TOKEN IN AUTHORIZATION!!! ---> which will hold the user id
 }
 body: {
     firstName: '',
@@ -166,10 +167,10 @@ body: {
 */
 export async function updateUserController(req, res) {
     try {
-        const { id } = req.query;
-        if (id) {
+        const { userId } = req.user;
+        if (userId) {
             const body = req.body;
-            UserModel.updateOne({ _id: id }, body, (err, data) => {
+            UserModel.updateOne({ _id: userId }, body, (err, data) => {
                 if (err) throw err;
                 res.status(201).send({ msg: "User data updated...!" })
             })
