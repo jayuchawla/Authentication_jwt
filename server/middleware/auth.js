@@ -20,3 +20,12 @@ export async function auth(req, res, next) {
         res.status(401).send({ error: "Authentication failed...!" })
     }
 }
+
+/* Middleware for local variable */
+export function localVariables(req, res, next) {
+    req.app.locals = {
+        OTP: null,
+        resetSession: false
+    }
+    next();
+}

@@ -35,14 +35,10 @@ router.route('/user/:username').get((req, res) => {
 })
 
 // to generate random OTP
-router.route('/generateOTP').get((req, res) => {
-    controller.generateOTPController(req, res);
-})
+router.route('/generateOTP').get(controller.verifyUser, authMiddleware.localVariables, controller.generateOTPController)
 
 // verify generated OTP
-router.route('/verifyOTP').get((req, res) => {
-    controller.verifyOTPController(req, res);
-})
+router.route('/verifyOTP').get(controller.verifyOTPController);
 
 // reset all variables
 router.route('/createResetSession').get((req, res) => {

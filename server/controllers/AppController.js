@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
-import ENV from '../config.js';
+import otpGenerator from 'otp-generator';
 
+import ENV from '../config.js';
 import UserModel from "../model/User.model.js";
 
 /** Middleware for verifying user */
@@ -13,9 +14,9 @@ export async function verifyUser(req, res, next) {
         if (!exist) {
             res.status(404).send({ error: "Cannot find user...!" })
         }
-        next(req, res);
+        next();
     } catch (error) {
-        res.status(404).send({ error: "Authentication error" })
+        res.status(404).send({ error: "Verification error...!" })
     }
 }
 
@@ -184,12 +185,19 @@ export async function updateUserController(req, res) {
 
 /** GET: http://localhost:8080/api/generateOTP */
 export async function generateOTPController(req, res) {
-
+    req.app.locals.OTP = await otpGenerator.generate(6, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
+    res.status(201).send({ code: req.app.locals.OTP })
 }
 
 /** GET: http://localhost:8080/api/verifyOTP */
 export async function verifyOTPController(req, res) {
-
+    const { code } = req.query;
+    if (parseInt(req.app.locals.OTP) === parseInt(code)) {
+        req.app.locals.OTP = null; // reset OTP value
+        req.app.locals.resetSession = true; // start session for reset password
+        return res.status(201).send({ msg: "OTP verification success...!" })
+    }
+    return res.status(400).send({ error: "Invalid OTP...!" })
 }
 
 // successfully redirect user when OTP is valid
