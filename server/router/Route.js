@@ -24,10 +24,8 @@ router.route('/authenticate').post((req, res) => {
 })
 
 // login in app
-router.route('/login').post((req, res) => {
-    controller.verifyUser(req, res, controller.loginController);
-})
-
+router.route('/login').post(controller.verifyUser, controller.loginController);
+    
 /****** GET ******/
 // get user with username
 router.route('/user/:username').get((req, res) => {
@@ -52,8 +50,6 @@ router.route('/updateUser').put((req, res) => {
 })
 
 // reset password
-router.route('/resetPassword').put((req, res) => {
-    controller.resetPasswordController(req, res);
-})
+router.route('/resetPassword').put(controller.verifyUser, controller.resetPasswordController);
 
 export default router;

@@ -203,11 +203,43 @@ export async function verifyOTPController(req, res) {
 // successfully redirect user when OTP is valid
 /** GET: http://localhost:8080/api/createResetSession */
 export async function createResetSessionController(req, res) {
-
+    if (req.app.locals.resetSession) {
+        req.app.locals.resetSession = false; // allow access to this route only once per OTP verification
+        return res.status(201).send({ msg: "Session reset success...!" });
+    }
+    return res.status(404).send({ error: "Session expired...!" })
 }
 
 // update the password when we have valid session
 /** PUT: http://localhost:8080/api/resetPassword */
 export async function resetPasswordController(req, res) {
+    try {
+        // req.app.locals.resetSession will be only true once OTP is verified!
+        if (!req.app.locals.resetSession) return res.status(404).send({ error: "Session expired...!" })
 
+        const { username, password } = req.body;
+        try {
+            UserModel.findOne({ username })
+                .then(user => {
+                    bcrypt.hash(password, 10)
+                        .then(hashedPassword => {
+                            UserModel.updateOne({ username: user.username }, { password: hashedPassword }, (err, data) => {
+                                if (err) throw err;
+                                req.app.locals.resetSession = false; // so that reset password is accessed only once per OTP verification.
+                                return res.status(201).send({ msg: "User password updated...!" });
+                            });
+                        })
+                        .catch(error => {
+                            return res.status(500).send({ error: "Unable to hash password...!" })
+                        })
+                })
+                .catch(error => {
+                    return res.status(404).send({ error: "User not found...!" })
+                })
+        } catch (error) {
+            return res.status(500).send({ error: error })
+        }
+    } catch (error) {
+        return res.status(401).send({ error: error })
+    }
 }
