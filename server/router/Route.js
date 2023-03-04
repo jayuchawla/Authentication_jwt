@@ -7,6 +7,9 @@ import * as controller from '../controllers/AppController.js';
 /* import authorization middleware */
 import * as authMiddleware from '../middleware/auth.js';
 
+/* import register mail controller */
+import * as mailMiddleware from '../controllers/mailer.js';
+
 /******* POST *******/
 // register user
 router.route('/register').post((req, res) => {
@@ -14,9 +17,7 @@ router.route('/register').post((req, res) => {
 })
 
 // send email
-router.route('/registerMail').post((req, res) => {
-    res.json('register mail route')
-})
+router.route('/registerMail').post(mailMiddleware.registerMail);
 
 // authenticate user
 router.route('/authenticate').post((req, res) => {
