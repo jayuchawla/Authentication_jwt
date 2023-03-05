@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import avatar from '../assets/profile.png';
 import styles from '../styles/username.module.css';
 import { Toaster } from 'react-hot-toast';
 import { useFormik } from 'formik';
 
+import { useAuthStore } from '../store/store';
 import { loginUsernameValidate } from '../helper/validate';
 
 export default function Username() {
+
+    // useAuthStore(state => {
+    //     console.log(state);
+    // })
+
+    const setUsername = useAuthStore((state) => {return state.setUsername})
+    // this is how username will be accessed in other components!!!
+    // const usernameFromStore = useAuthStore((state) => {return state.auth.username})
 
     const formik = useFormik({
         initialValues: {
@@ -17,7 +26,8 @@ export default function Username() {
         validateOnBlur: false,
         validateOnChange: false,
         onSubmit: async (values) => {
-            console.log(values);
+            // console.log(values);
+            setUsername(values.username);
         }
     })
 
