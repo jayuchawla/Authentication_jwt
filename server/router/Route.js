@@ -20,8 +20,8 @@ router.route('/register').post((req, res) => {
 router.route('/registerMail').post(mailMiddleware.registerMail);
 
 // authenticate user
-router.route('/authenticate').post((req, res) => {
-    res.json('authentication route');
+router.route('/authenticate').post(controller.verifyUser, (req, res) => {
+    return res.end();
 })
 
 // login in app
@@ -37,7 +37,7 @@ router.route('/user/:username').get((req, res) => {
 router.route('/generateOTP').get(controller.verifyUser, authMiddleware.localVariables, controller.generateOTPController)
 
 // verify generated OTP
-router.route('/verifyOTP').get(controller.verifyOTPController);
+router.route('/verifyOTP').get(controller.verifyUser, controller.verifyOTPController);
 
 // reset all variables
 router.route('/createResetSession').get((req, res) => {
