@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import avatar from '../assets/profile.png';
 import styles from '../styles/username.module.css';
 import { Toaster } from 'react-hot-toast';
@@ -18,6 +18,7 @@ export default function Username() {
     // this is how username will be accessed in other components!!!
     // const usernameFromStore = useAuthStore((state) => {return state.auth.username})
 
+    const navigate = useNavigate();
     const formik = useFormik({
         initialValues: {
             username: ''
@@ -28,6 +29,7 @@ export default function Username() {
         onSubmit: async (values) => {
             // console.log(values);
             setUsername(values.username);
+            navigate('/password')
         }
     })
 

@@ -37,15 +37,6 @@ export async function registerUser(credentials) {
     }
 }
 
-/* get user details */
-export async function getUser({ username }) {
-    try {
-        const { data } = await axios.get(`/api/getUser/${username}`);
-    } catch (error) {
-        return Promise.reject({ error });
-    }
-}
-
 /* login user */
 export async function login({ username, password }) {
     try {
@@ -102,6 +93,6 @@ export async function resetPassword({ username, password }) {
         const { data, status } = await axios.put('/api/resetPassword', { username, password });
         return Promise.resolve({ data, status });
     } catch (error) {
-        return Promis
+        return Promise.reject({ error })
     }
 }
